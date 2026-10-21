@@ -1,0 +1,57 @@
+[
+  {
+    "id": "google-build-with-ai",
+    "title": "2nd Runner-Up — Google Build with AI: Code for Communities",
+    "category": "National AI Hackathon",
+    "year": "2026",
+    "badge": "National Finalist & Winner",
+    "description": "Won 2nd Runner-Up nationally in the 'Clean Air & Clear Streets' category at Google's national hackathon. Led the engineering team and presented CleaniSense at the National Showcase in New Delhi before 11+ Members of Parliament.",
+    "icon": "Trophy",
+    "link": "https://mohmed-husain.in/",
+    "display_order": 1
+  },
+  {
+    "id": "ieee-publication",
+    "title": "Research Abstract Selected for IEEE Transactions on Computational Imaging",
+    "category": "Research & Publications",
+    "year": "2026",
+    "badge": "IEEE Publication",
+    "description": "Research on MIMIC-IV Clinical NLP & Privacy-Preserving Federated Learning with PubMedBERT under Dr. Sanjay Saxena at IIIT Vadodara. Abstract selected for IEEE Transactions on Computational Imaging.",
+    "icon": "Award",
+    "link": "https://mohmed-husain.in/",
+    "display_order": 2
+  },
+  {
+    "id": "postman-expert",
+    "title": "Postman API Student Expert",
+    "category": "API Engineering",
+    "year": "2025",
+    "badge": "Certified Expert",
+    "description": "Recognized by Postman for demonstrating high proficiency in REST API design, testing, mock servers, and automated test scripting.",
+    "icon": "CheckCircle",
+    "link": "https://mohmed-husain.in/",
+    "display_order": 3
+  },
+  {
+    "id": "nvidia-dli",
+    "title": "Fundamentals of Deep Learning — NVIDIA DLI",
+    "category": "Deep Learning Certification",
+    "year": "2025",
+    "badge": "NVIDIA Certified",
+    "description": "Certified by NVIDIA Deep Learning Institute in training deep neural networks, computer vision, and transformer architectures.",
+    "icon": "Cpu",
+    "link": "https://mohmed-husain.in/",
+    "display_order": 4
+  },
+  {
+    "id": "microsoft-ambassador",
+    "title": "Microsoft Learn Student Ambassador",
+    "category": "Community Leadership",
+    "year": "2024",
+    "badge": "Community Lead",
+    "description": "Selected to foster technical community, host workshops on AI and cloud engineering, and mentor fellow students.",
+    "icon": "Users",
+    "link": "https://mohmed-husain.in/",
+    "display_order": 5
+  }
+]

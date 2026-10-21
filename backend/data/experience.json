@@ -1,0 +1,44 @@
+[
+  {
+    "company": "Quba Infotech",
+    "location": "Gandhinagar, Gujarat, India",
+    "role": "AI Backend Engineer Intern",
+    "period": "Dec 2025 – Present",
+    "type": "Internship",
+    "bullets": [
+      "Architected modular FastAPI & Django services and REST APIs, separating transcript, retrieval, and generation concerns.",
+      "Orchestrated provider-agnostic OpenAI and Ollama integrations, enabling model switching without vendor coupling.",
+      "Established Pydantic request and response contracts to validate structured AI outputs across modular services.",
+      "Designed QdrantDB retrieval interfaces that isolated vector search and contextual memory from application logic."
+    ],
+    "skills": ["FastAPI", "Django", "LangChain", "OpenAI", "Ollama", "QdrantDB", "Pydantic", "Docker"]
+  },
+  {
+    "company": "Indian Institute of Information Technology Vadodara (IIITV)",
+    "location": "Vadodara, Gujarat, India",
+    "role": "Research Intern (Clinical NLP & Federated Learning)",
+    "period": "May 2026 – Aug 2026",
+    "mentor": "Dr. Sanjay Saxena",
+    "type": "Research Internship",
+    "bullets": [
+      "Architected a centralized Clinical NLP pipeline for ICD prediction across ~298,000 MIMIC-IV clinical records.",
+      "Engineered PubMedBERT preprocessing with dataset integration, ICD mapping, and hierarchical multi-label classification targets.",
+      "Optimized long-document training with sliding-window tokenization, class-balanced focal loss, AMP, and checkpointing.",
+      "Established threshold optimization and a centralized baseline for privacy-preserving Federated Learning integration."
+    ],
+    "skills": ["PubMedBERT", "PyTorch", "Transformers", "Federated Learning", "MIMIC-IV", "Sliding-Window", "AMP"]
+  },
+  {
+    "company": "Glynac AI",
+    "location": "US-based, Remote",
+    "role": "Backend Engineer Intern",
+    "period": "Aug 2025 – Nov 2025",
+    "type": "Internship",
+    "bullets": [
+      "Engineered Django and Python REST APIs supporting reusable backend integrations for AI SaaS workflows.",
+      "Integrated multi-system data pipelines to standardize data exchange across internal services.",
+      "Optimized backend efficiency by 15% by resolving N+1 queries and adding targeted database indexes on critical endpoints."
+    ],
+    "skills": ["Python", "Django", "REST APIs", "PostgreSQL", "Database Indexing", "Performance Optimization"]
+  }
+]

@@ -1,0 +1,24 @@
+{
+  "categories": [
+    {
+      "name": "AI & Agentic Systems",
+      "icon": "Bot",
+      "skills": ["Agentic AI", "LangGraph", "LangChain", "RAG Pipelines", "OpenAI API", "Ollama", "FAISS / HNSW", "QdrantDB", "ChromaDB", "pgvector"]
+    },
+    {
+      "name": "Machine Learning & NLP",
+      "icon": "Brain",
+      "skills": ["PyTorch", "Transformers", "PubMedBERT", "Medical NLP", "Federated Learning", "Multi-Label Classification", "Pandas", "NumPy"]
+    },
+    {
+      "name": "Backend Engineering",
+      "icon": "Server",
+      "skills": ["Python", "FastAPI", "Django", "REST APIs", "Microservices", "SQLAlchemy", "Celery", "Redis", "Authentication", "Pydantic", "Go (learning)"]
+    },
+    {
+      "name": "Databases & Cloud DevOps",
+      "icon": "Database",
+      "skills": ["PostgreSQL", "Docker", "AWS", "Linux / Nginx", "Git / GitHub", "Postman", "MySQL", "SQLite", "Aiven Cloud"]
+    }
+  ]
+}

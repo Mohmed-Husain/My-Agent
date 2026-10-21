@@ -1,0 +1,108 @@
+[
+  {
+    "id": "cleanisense",
+    "title": "CleaniSense",
+    "badge": "🏆 Google Hackathon Winner (2nd Runner-Up)",
+    "category": "AI & Civic Tech",
+    "description": "AI-powered civic platform for environmental monitoring and citizen grievance reporting. Led the engineering team in delivering an AI image validation pipeline for complaint verification, automated municipal department routing, and live tracking dashboards. Presented at the National Showcase in New Delhi before 11+ Members of Parliament.",
+    "tech_stack": ["Gemini AI", "Python", "Image Processing", "Municipal Dashboards", "Civic Tech", "FastAPI"],
+    "highlights": [
+      "2nd Runner-Up nationally in 'Clean Air & Clear Streets' category at Google's 'Build with AI: Code for Communities'",
+      "Automated image validation for complaint verification using Gemini AI",
+      "Smart routing system to municipal departments with real-time tracking",
+      "Presented to 11+ Members of Parliament at the National Showcase in New Delhi"
+    ],
+    "github_url": "https://github.com/Mohmed-Husain",
+    "live_url": "https://mohmed-husain.in/",
+    "featured": true,
+    "display_order": 1
+  },
+  {
+    "id": "ai-meeting-assistant",
+    "title": "AI Meeting Assistant",
+    "badge": "🚀 Production Enterprise Tool",
+    "category": "Agentic AI & RAG",
+    "description": "Unified platform for transcript intelligence, semantic search, and automated meeting notes generation. Built using FastAPI, LangChain, and Qdrant vector database.",
+    "tech_stack": ["Python", "FastAPI", "Django", "LangChain", "OpenAI", "Ollama", "Qdrant VDB", "K-Means"],
+    "highlights": [
+      "Reduced redundant transcript processing by 70–78% with semantic clustering and hierarchical summarization",
+      "Significantly lowered LLM inference costs for long transcripts",
+      "Engineered QdrantDB-backed RAG for semantic search and transcript-grounded contextual analysis",
+      "Provider-agnostic LLM integration supporting seamless switching between OpenAI and local Ollama"
+    ],
+    "github_url": "https://github.com/Mohmed-Husain",
+    "live_url": "https://mohmed-husain.in/",
+    "featured": true,
+    "display_order": 2
+  },
+  {
+    "id": "leapsql-ai",
+    "title": "LeapSQL-AI",
+    "badge": "🛡️ Multi-Agent SQL System",
+    "category": "Multi-Agent AI",
+    "description": "Enterprise-grade Natural Language to SQL platform. Architected a secure 3-agent LangGraph pipeline (generator, evaluator, executor) with a 5-layer security model.",
+    "tech_stack": ["Python", "FastAPI", "LangGraph", "Multi-Agent Systems", "PostgreSQL", "Pydantic", "SQLAlchemy"],
+    "highlights": [
+      "3-Agent LangGraph Pipeline: Generator writes query, Evaluator verifies syntax/safety, Executor runs against DB",
+      "5-layer security model prevents destructive (DROP, DELETE, TRUNCATE) or malformed queries",
+      "Interactive schema inspection and contextual database indexing",
+      "Validates structured AI outputs using Pydantic contracts"
+    ],
+    "github_url": "https://github.com/Mohmed-Husain/LeepSQL-AI",
+    "live_url": "https://mohmed-husain.in/",
+    "featured": true,
+    "display_order": 3
+  },
+  {
+    "id": "trading-alert-system",
+    "title": "Trading Alert System",
+    "badge": "⚡ Real-Time High-Throughput",
+    "category": "FinTech & Distributed Systems",
+    "description": "Real-time event-driven alert engine computing 5 technical indicators (RSI, MACD, Bollinger Bands, SMA, ATR) via Angel One SmartAPI.",
+    "tech_stack": ["Python", "Django", "Celery", "Redis", "SmartAPI", "PostgreSQL", "WebSockets"],
+    "highlights": [
+      "Asynchronous alert engine evaluating multi-condition logic across 100+ stock tickers concurrently",
+      "Computes 5 technical indicators (RSI, MACD, Bollinger Bands, SMA, ATR) in sub-second latency",
+      "Event-driven architecture backed by Celery task workers and Redis message queue",
+      "Instant notification dispatch via WebSockets and webhooks"
+    ],
+    "github_url": "https://github.com/Mohmed-Husain/Primetrade.ai",
+    "live_url": "https://mohmed-husain.in/",
+    "featured": true,
+    "display_order": 4
+  },
+  {
+    "id": "gdg-metropulse",
+    "title": "GDG MetroPulse",
+    "badge": "🌐 Smart City Transport",
+    "category": "Fullstack & Cloud",
+    "description": "Smart transit management platform built for Google Developer Groups hackathon, providing live metro schedule optimization, crowd analysis, and route recommendations.",
+    "tech_stack": ["TypeScript", "Next.js", "FastAPI", "Tailwind CSS", "PostgreSQL"],
+    "highlights": [
+      "Dynamic transit routing and live crowd level tracking",
+      "Responsive interactive map with transit node visualizations"
+    ],
+    "github_url": "https://github.com/Mohmed-Husain/GDG-MetroPulse",
+    "live_url": "https://mohmed-husain.in/",
+    "featured": false,
+    "display_order": 5
+  },
+  {
+    "id": "clinical-nlp-research",
+    "title": "Clinical NLP & MIMIC-IV ICD Prediction",
+    "badge": "🔬 Published Research Abstract",
+    "category": "Healthcare AI & Research",
+    "description": "Centralized Clinical NLP pipeline for ICD code prediction across 298,000 MIMIC-IV clinical discharge summaries under Dr. Sanjay Saxena. Abstract selected for IEEE Transactions on Computational Imaging.",
+    "tech_stack": ["PubMedBERT", "PyTorch", "Transformers", "Federated Learning", "Sliding-Window Tokenization", "AMP"],
+    "highlights": [
+      "Architected Clinical NLP pipeline for ICD prediction across 298k MIMIC-IV clinical records",
+      "Engineered PubMedBERT preprocessing with hierarchical multi-label classification targets",
+      "Sliding-window tokenization, class-balanced focal loss, and AMP optimization",
+      "Established baseline for privacy-preserving Federated Learning in clinical setups"
+    ],
+    "github_url": "https://github.com/Mohmed-Husain/NLP-summer-internship-",
+    "live_url": "https://mohmed-husain.in/",
+    "featured": true,
+    "display_order": 6
+  }
+]

@@ -1,0 +1,64 @@
+{
+  "name": "Mohmed Husain Pasheriya",
+  "title": "AI Systems Engineer & Backend Engineer",
+  "headline": "Building scalable Agentic AI, LLM applications, RAG pipelines, and high-performance backend infrastructure.",
+  "location": "Gandhinagar / Vadodara, Gujarat, India",
+  "email": "mohmedhusain72@gmail.com",
+  "github": "https://github.com/Mohmed-Husain",
+  "linkedin": "https://linkedin.com/in/mohmed-husain/",
+  "website": "https://mohmed-husain.in/",
+  "education": {
+    "degree": "B.Tech in Computer Science & Engineering",
+    "institution": "Indian Institute of Information Technology, Vadodara (IIIT Vadodara)",
+    "period": "2023 - 2027",
+    "year": "4th Year Undergraduate (Class of 2027)"
+  },
+  "bio": "I am an AI Systems Engineer and 4th-year Computer Science student at IIIT Vadodara (Class of 2027), specializing in Agentic AI, LLM applications, and scalable backend architecture. My experience spans production FastAPI & Django microservices, multi-agent workflows with LangGraph, advanced RAG architectures, and Clinical NLP research (PubMedBERT & Federated Learning). I design production-oriented AI infrastructure that connects reliable APIs, retrieval systems, and transformer-based workflows.",
+  "interests": [
+    "Agentic AI & Multi-Agent Systems",
+    "High-Performance Python Backend Architecture",
+    "Advanced RAG & Vector Databases",
+    "Clinical & Medical NLP",
+    "Privacy-Preserving Federated Learning",
+    "Event-Driven Microservices & Cloud Infrastructure"
+  ],
+  "extracurriculars": [
+    {
+      "role": "Social Media Lead",
+      "organization": "Arcadia - Gaming Club of IIIT Vadodara",
+      "period": "May 2024 - April 2025"
+    },
+    {
+      "role": "Member",
+      "organization": "Technical Committee IIIT Vadodara",
+      "period": "Jan 2025 - April 2025"
+    },
+    {
+      "role": "Member",
+      "organization": "IIITV Finance & Consulting Club",
+      "period": "Aug 2023 - Sept 2024"
+    }
+  ],
+  "certifications": [
+    {
+      "title": "Postman API Student Expert",
+      "issuer": "Postman",
+      "year": "2025"
+    },
+    {
+      "title": "Fundamentals of Deep Learning",
+      "issuer": "NVIDIA Deep Learning Institute (DLI)",
+      "year": "2025"
+    },
+    {
+      "title": "Django Certification",
+      "issuer": "Simplilearn",
+      "year": "2025"
+    },
+    {
+      "title": "Microsoft Learn Student Ambassador",
+      "issuer": "Microsoft",
+      "year": "2024"
+    }
+  ]
+}
