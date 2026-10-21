@@ -1,3 +1,12 @@
+import sys
+from pathlib import Path
+
+# Ensure project root is in sys.path
+ROOT_DIR = Path(__file__).resolve().parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
+import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,10 +17,15 @@ from app.api.routes.portfolio import router as portfolio_router
 from app.api.routes.admin import router as admin_router
 from app.api.routes.health import router as health_router
 
+logger = logging.getLogger("uvicorn.error")
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup: ensure tables exist
-    await init_db(reset=settings.RESET_DB_ON_STARTUP)
+    # Startup: ensure tables exist safely
+    try:
+        await init_db(reset=settings.RESET_DB_ON_STARTUP)
+    except Exception as e:
+        logger.error(f"Database initialization warning on startup: {e}")
     yield
     # Shutdown logic if needed
 

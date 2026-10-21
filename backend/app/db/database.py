@@ -66,11 +66,14 @@ async def init_db(reset: bool = False):
     except Exception as e:
         logger.warning(f"Could not connect to {current_db_type} database ({e}).")
         if current_db_type != "sqlite":
-            logger.info("Switching to local fallback SQLite database (local_agent.db)...")
-            engine, async_session_maker = build_engine_and_session(settings.FALLBACK_SQLITE_URL, is_pg=False)
-            current_db_type = "sqlite"
-            await try_create(engine)
-            logger.info("Fallback SQLite database created and initialized successfully.")
+            logger.info("Switching to local fallback SQLite database...")
+            try:
+                engine, async_session_maker = build_engine_and_session(settings.FALLBACK_SQLITE_URL, is_pg=False)
+                current_db_type = "sqlite"
+                await asyncio.wait_for(try_create(engine), timeout=5.0)
+                logger.info("Fallback SQLite database initialized successfully.")
+            except Exception as sql_err:
+                logger.warning(f"Fallback SQLite initialization warning: {sql_err}")
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
     async with async_session_maker() as session:
