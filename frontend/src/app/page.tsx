@@ -60,13 +60,12 @@ export default function Home() {
       {/* Top Navbar */}
       <header className="relative z-20 border-b border-slate-800/80 bg-slate-950/60 backdrop-blur-md px-6 py-4 flex items-center justify-between max-w-7xl mx-auto w-full">
         <div className="flex items-center gap-3">
-          <div className="relative w-9 h-9 rounded-full overflow-hidden border-2 border-cyan-400/80 shadow-md shadow-cyan-500/20 shrink-0">
+          <div className="relative w-8 h-8 rounded-full overflow-hidden border border-cyan-400/50 shadow-md shadow-cyan-500/20 shrink-0">
             <Image
-              src="/avatar/husain-avatar.jpg"
+              src="/avatar.jpg"
               alt="Mohmed Husain"
-              width={36}
-              height={36}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
             />
           </div>
           <div>

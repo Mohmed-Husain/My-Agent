@@ -197,13 +197,12 @@ export default function ChatInterface({ onStateChange }: ChatInterfaceProps) {
       {/* Chat Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800/80 bg-slate-900/60">
         <div className="flex items-center gap-2.5">
-          <div className="relative w-8 h-8 rounded-full overflow-hidden border border-cyan-400 shadow-md shadow-cyan-500/20">
+          <div className="relative w-9 h-9 rounded-full overflow-hidden border border-cyan-400/50 shadow-md shadow-cyan-500/20 shrink-0">
             <Image
-              src="/avatar/husain-avatar.jpg"
+              src="/avatar.jpg"
               alt="Mohmed Husain"
-              width={32}
-              height={32}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
             />
           </div>
           <div>
@@ -240,13 +239,12 @@ export default function ChatInterface({ onStateChange }: ChatInterfaceProps) {
             }`}
           >
             {msg.role === "assistant" && (
-              <div className="relative w-7 h-7 rounded-full overflow-hidden border border-cyan-400/80 shrink-0 mt-1 shadow-sm">
+              <div className="relative w-8 h-8 rounded-full overflow-hidden border border-cyan-400/40 shadow-sm shrink-0 mt-1">
                 <Image
-                  src="/avatar/husain-avatar.jpg"
+                  src="/avatar.jpg"
                   alt="Mohmed Husain"
-                  width={28}
-                  height={28}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
                 />
               </div>
             )}
