@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Send, User, Bot, RefreshCw, ArrowUpRight } from "lucide-react";
+import Image from "next/image";
+import { Send, User, RefreshCw, ArrowUpRight } from "lucide-react";
 import { ChatMessage, CardItem, CardType } from "@/lib/types";
 import { streamChatMessage, fetchChatHistory } from "@/lib/api";
 import CardRenderer from "./CardRenderer";
@@ -196,8 +197,14 @@ export default function ChatInterface({ onStateChange }: ChatInterfaceProps) {
       {/* Chat Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800/80 bg-slate-900/60">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center shadow-md">
-            <Bot className="w-4 h-4 text-white" />
+          <div className="relative w-8 h-8 rounded-full overflow-hidden border border-cyan-400 shadow-md shadow-cyan-500/20">
+            <Image
+              src="/avatar/husain-avatar.jpg"
+              alt="Mohmed Husain"
+              width={32}
+              height={32}
+              className="w-full h-full object-cover"
+            />
           </div>
           <div>
             <h3 className="text-sm font-semibold text-slate-100 flex items-center gap-1.5">
@@ -233,8 +240,14 @@ export default function ChatInterface({ onStateChange }: ChatInterfaceProps) {
             }`}
           >
             {msg.role === "assistant" && (
-              <div className="w-7 h-7 rounded-full bg-cyan-600/30 border border-cyan-500/40 flex items-center justify-center shrink-0 mt-1">
-                <Bot className="w-3.5 h-3.5 text-cyan-300" />
+              <div className="relative w-7 h-7 rounded-full overflow-hidden border border-cyan-400/80 shrink-0 mt-1 shadow-sm">
+                <Image
+                  src="/avatar/husain-avatar.jpg"
+                  alt="Mohmed Husain"
+                  width={28}
+                  height={28}
+                  className="w-full h-full object-cover"
+                />
               </div>
             )}
 

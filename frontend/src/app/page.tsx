@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import {
   Github,
   Linkedin,
@@ -59,8 +60,14 @@ export default function Home() {
       {/* Top Navbar */}
       <header className="relative z-20 border-b border-slate-800/80 bg-slate-950/60 backdrop-blur-md px-6 py-4 flex items-center justify-between max-w-7xl mx-auto w-full">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center font-bold text-white shadow-md shadow-cyan-500/20 text-xs">
-            MH
+          <div className="relative w-9 h-9 rounded-full overflow-hidden border-2 border-cyan-400/80 shadow-md shadow-cyan-500/20 shrink-0">
+            <Image
+              src="/avatar/husain-avatar.jpg"
+              alt="Mohmed Husain"
+              width={36}
+              height={36}
+              className="w-full h-full object-cover"
+            />
           </div>
           <div>
             <h1 className="text-sm font-bold tracking-tight text-slate-100 flex items-center gap-2">
