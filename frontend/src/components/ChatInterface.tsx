@@ -6,6 +6,7 @@ import { Send, User, RefreshCw, ArrowUpRight } from "lucide-react";
 import { ChatMessage, CardItem, CardType } from "@/lib/types";
 import { streamChatMessage, fetchChatHistory } from "@/lib/api";
 import CardRenderer from "./CardRenderer";
+import MarkdownContent from "./MarkdownContent";
 
 interface ChatInterfaceProps {
   onStateChange?: (state: "idle" | "thinking" | "talking") => void;
@@ -257,7 +258,11 @@ export default function ChatInterface({ onStateChange }: ChatInterfaceProps) {
               }`}
             >
               {/* Message text */}
-              <div className="whitespace-pre-wrap">{msg.content}</div>
+              {msg.role === "assistant" ? (
+                <MarkdownContent content={msg.content} />
+              ) : (
+                <div className="whitespace-pre-wrap">{msg.content}</div>
+              )}
 
               {/* Typing dots while streaming if content is still empty */}
               {msg.isStreaming && !msg.content && (
