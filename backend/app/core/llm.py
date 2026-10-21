@@ -61,6 +61,7 @@ class DeepSeekClient:
                         return
 
                     tool_calls_accumulator = {}
+                    has_streamed_text = False
 
                     async for line in response.aiter_lines():
                         if not line or not line.startswith("data: "):
@@ -79,6 +80,7 @@ class DeepSeekClient:
 
                             # 1. Stream text tokens directly
                             if "content" in delta and delta["content"]:
+                                has_streamed_text = True
                                 yield {"type": "text", "content": delta["content"]}
 
                             # 2. Accumulate tool call chunks
@@ -100,6 +102,16 @@ class DeepSeekClient:
                             logger.debug(f"Stream parse warning: {parse_err}")
 
                     # If tools were invoked by DeepSeek, execute them now and yield cards
+                    TOOL_INTROS = {
+                        "show_projects": "Here are my featured projects and systems I've built:",
+                        "show_project_details": "Here are the deep-dive architectural details for this project:",
+                        "show_achievements": "Here are my honors, hackathon achievements, and milestones:",
+                        "show_experience": "Here is an overview of my professional experience and research:",
+                        "show_skills": "Here is a breakdown of my engineering skills and core tech stack:",
+                        "show_github_repos": "Here are my active open-source repositories on GitHub:",
+                        "show_contact_card": "I'd love to connect! Here is my direct contact information:"
+                    }
+
                     for idx, tc in tool_calls_accumulator.items():
                         name = tc["name"]
                         args_str = tc["arguments"]
@@ -111,6 +123,13 @@ class DeepSeekClient:
                             args = {}
 
                         logger.info(f"Executing tool call: {name} with args: {args}")
+                        
+                        # If no text was output by the model prior to the tool call, provide a clean intro
+                        if not has_streamed_text and name in TOOL_INTROS:
+                            intro_text = TOOL_INTROS[name]
+                            yield {"type": "text", "content": intro_text}
+                            has_streamed_text = True
+
                         card_result = execute_tool(name, args)
                         yield {
                             "type": "card",
