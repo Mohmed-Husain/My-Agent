@@ -17,7 +17,11 @@ class Settings(BaseSettings):
     
     # Database
     DATABASE_URL: str = ""
-    FALLBACK_SQLITE_URL: str = "sqlite+aiosqlite:///./local_agent.db"
+    FALLBACK_SQLITE_URL: str = (
+        "sqlite+aiosqlite:////tmp/local_agent.db"
+        if os.environ.get("VERCEL")
+        else "sqlite+aiosqlite:///./local_agent.db"
+    )
     RESET_DB_ON_STARTUP: bool = False  # Set to True to clean tables
     
     # CORS
