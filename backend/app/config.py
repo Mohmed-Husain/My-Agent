@@ -41,7 +41,7 @@ class Settings(BaseSettings):
     ADMIN_SECRET: str = "husain-agent-secret-2026"
     
     # 4-Tier Rate Limiting & Abuse Prevention
-    RATE_LIMIT_ENABLED: bool = False  # Set to True in production to enforce limits
+    RATE_LIMIT_ENABLED: bool = True  # Set to True in production to enforce limits
     RATE_LIMIT_SESSION_MAX: int = 10  # 10 requests per window per session
     RATE_LIMIT_SESSION_WINDOW: int = 120  # 2 minutes window
     RATE_LIMIT_IP_MAX: int = 20  # 20 requests per window per IP

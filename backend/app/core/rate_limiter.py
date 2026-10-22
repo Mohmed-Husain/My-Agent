@@ -6,12 +6,11 @@ from app.config import settings
 
 class RateLimiter:
     """
-    Production-grade 4-tier rate limiter with anomaly and probe tracking:
+    Production-grade 4-tier rate limiter:
     1. Per-session limit: Prevents chat message spamming within an active session.
     2. Per-IP abuse limit: Blocks automated scrapers / bot bursts per client IP.
     3. Global daily LLM budget: Hard daily ceiling on AI inferences to protect budget.
-    4. Anomaly & Probe Detection: Flags refusal clusters and security probes per session/IP.
-    5. HTTP 429 Retry-After calculation.
+    4. HTTP 429 Retry-After calculation.
     """
 
     def __init__(self):
@@ -19,27 +18,9 @@ class RateLimiter:
         self.session_windows: dict[str, list[float]] = {}
         # ip_address -> list of timestamps
         self.ip_windows: dict[str, list[float]] = {}
-        # session_id -> list of security probe timestamps
-        self.probe_clusters: dict[str, list[float]] = {}
         # Global daily counter tracking
         self.daily_call_count: int = 0
         self.current_day: str = self._get_current_day()
-
-    def record_security_probe(self, session_id: str, probe_type: str, details: str):
-        """Server-side anomaly logging for prompt injection, SSRF, or privilege escalation probes."""
-        now = time.time()
-        cluster = self.probe_clusters.get(session_id, [])
-        cluster = self._clean_window(cluster, 300, now)  # 5-minute anomaly window
-        cluster.append(now)
-        self.probe_clusters[session_id] = cluster
-
-        if len(cluster) >= 3:
-            import logging
-            logger = logging.getLogger("uvicorn.error")
-            logger.warning(
-                f"[SECURITY ALERT] Anomaly pattern detected for session {session_id}! "
-                f"{len(cluster)} security probes in last 5 minutes. Last probe: {probe_type} - {details}"
-            )
 
     def _get_current_day(self) -> str:
         return datetime.now(timezone.utc).strftime("%Y-%m-%d")
