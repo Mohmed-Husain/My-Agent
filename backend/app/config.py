@@ -40,6 +40,14 @@ class Settings(BaseSettings):
     # Admin security
     ADMIN_SECRET: str = "husain-agent-secret-2026"
     
+    # 4-Tier Rate Limiting & Abuse Prevention
+    RATE_LIMIT_ENABLED: bool = False  # Set to True in production to enforce limits
+    RATE_LIMIT_SESSION_MAX: int = 10  # 10 requests per window per session
+    RATE_LIMIT_SESSION_WINDOW: int = 120  # 2 minutes window
+    RATE_LIMIT_IP_MAX: int = 20  # 20 requests per window per IP
+    RATE_LIMIT_IP_WINDOW: int = 120  # 2 minutes window
+    RATE_LIMIT_GLOBAL_DAILY_BUDGET: int = 500  # 500 total LLM calls per day across all visitors
+    
     model_config = SettingsConfigDict(
         env_file=str(BASE_DIR / ".env"),
         env_file_encoding="utf-8",

@@ -7,6 +7,7 @@ from sqlalchemy import select
 from app.db.models import SessionModel, MessageModel, VisitorQuestionModel
 from app.core.prompts import SYSTEM_PROMPT
 from app.core.llm import deepseek_client
+from app.core.graph import multi_agent_graph
 
 logger = logging.getLogger("uvicorn.error")
 
@@ -96,18 +97,48 @@ class ConversationOrchestrator:
         )
         past_msgs = list(reversed(history_result.scalars().all()))
 
-        # Build prompt payload
-        llm_messages = [{"role": "system", "content": SYSTEM_PROMPT}]
-        for m in past_msgs[:-1]:  # exclude the one we just added (added next)
-            llm_messages.append({"role": m.role, "content": m.content})
-        llm_messages.append({"role": "user", "content": user_message_clean})
+        chat_history = [
+            {"role": m.role, "content": m.content}
+            for m in past_msgs[:-1]
+        ]
 
-        # 5. Stream from LLM & accumulate
+        # 5. Run LangGraph Multi-Agent Orchestration
+        # Agent 1 (Researcher/Router) decides tools, fetches live context & card pairings
+        # Agent 2 (Persona Formatter) creates the synthesis instructions
+        graph_input = {
+            "session_id": active_session_id,
+            "visitor_name": visitor_name,
+            "user_message": user_message_clean,
+            "chat_history": chat_history,
+            "needs_tools": False,
+            "tool_calls": [],
+            "research_context": "",
+            "card_type": None,
+            "card_data": None,
+            "final_text": ""
+        }
+
+        try:
+            graph_output = await multi_agent_graph.ainvoke(graph_input)
+            formatter_messages = graph_output.get("formatter_messages")
+            card_type = graph_output.get("card_type")
+            card_data = graph_output.get("card_data")
+        except Exception as graph_err:
+            logger.error(f"LangGraph execution fallback: {graph_err}")
+            formatter_messages = [
+                {"role": "system", "content": SYSTEM_PROMPT},
+                *chat_history,
+                {"role": "user", "content": user_message_clean}
+            ]
+            card_type = None
+            card_data = None
+
+        # 6. Stream from LLM & accumulate
         assistant_text_chunks = []
         collected_cards = []
 
         try:
-            async for chunk in deepseek_client.stream_chat(llm_messages):
+            async for chunk in deepseek_client.stream_chat(formatter_messages):
                 chunk_type = chunk.get("type")
                 if chunk_type == "text":
                     assistant_text_chunks.append(chunk.get("content", ""))
@@ -119,6 +150,19 @@ class ConversationOrchestrator:
 
                 # Yield SSE chunk
                 yield f"data: {json.dumps(chunk)}\n\n"
+
+            # If Agent 1 prepared a card and it wasn't duplicated, emit it cleanly
+            if card_type and card_data and not any(c.get("card_type") == card_type for c in collected_cards):
+                card_payload = {
+                    "type": "card",
+                    "card_type": card_type,
+                    "data": card_data
+                }
+                collected_cards.append({
+                    "card_type": card_type,
+                    "data": card_data
+                })
+                yield f"data: {json.dumps(card_payload)}\n\n"
 
         except Exception as e:
             logger.error(f"Error during stream generation: {e}")

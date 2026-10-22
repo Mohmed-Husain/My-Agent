@@ -1,8 +1,19 @@
 import json
+import time
+import base64
+import logging
 from pathlib import Path
 from typing import Any
+import httpx
+from app.config import settings
+
+logger = logging.getLogger("uvicorn.error")
 
 DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data"
+
+# In-memory GitHub cache: repo_key -> (timestamp, data)
+_GITHUB_CACHE: dict[str, tuple[float, dict[str, Any]]] = {}
+CACHE_TTL_SECONDS = 900  # 15 minutes
 
 def load_data(filename: str):
     p = DATA_DIR / filename
@@ -10,6 +21,90 @@ def load_data(filename: str):
         with open(p, "r", encoding="utf-8") as f:
             return json.load(f)
     return []
+
+async def fetch_github_repo_details(repo_name: str, include_readme: bool = True, include_tree: bool = True) -> dict[str, Any]:
+    """
+    Scrapes and fetches live repository metadata, README content, and file structures from GitHub.
+    Uses 15-minute in-memory cache to stay well within GitHub rate limits.
+    """
+    # Clean repo name (e.g. handle 'LeepSQL-AI' or 'Mohmed-Husain/LeepSQL-AI' or full URLs)
+    clean_repo = repo_name.strip().rstrip("/")
+    if "github.com/" in clean_repo:
+        clean_repo = clean_repo.split("github.com/")[-1]
+    
+    parts = clean_repo.split("/")
+    if len(parts) == 1:
+        owner = settings.GITHUB_USERNAME
+        repo = parts[0]
+    else:
+        owner = parts[0]
+        repo = parts[1]
+
+    cache_key = f"{owner}/{repo}"
+    now = time.time()
+    if cache_key in _GITHUB_CACHE:
+        cached_time, cached_data = _GITHUB_CACHE[cache_key]
+        if now - cached_time < CACHE_TTL_SECONDS:
+            return cached_data
+
+    headers = {"Accept": "application/vnd.github.v3+json", "User-Agent": "Mohmed-Husain-AI-Agent"}
+    if settings.GITHUB_TOKEN and len(settings.GITHUB_TOKEN) > 5:
+        headers["Authorization"] = f"Bearer {settings.GITHUB_TOKEN}"
+
+    result: dict[str, Any] = {
+        "repo": f"{owner}/{repo}",
+        "description": "",
+        "stars": 0,
+        "forks": 0,
+        "language": "",
+        "readme_summary": "",
+        "directory_structure": []
+    }
+
+    try:
+        async with httpx.AsyncClient(timeout=8.0) as client:
+            # 1. Fetch repo metadata
+            repo_res = await client.get(f"https://api.github.com/repos/{owner}/{repo}", headers=headers)
+            if repo_res.status_code == 200:
+                repo_info = repo_res.json()
+                result["description"] = repo_info.get("description") or ""
+                result["stars"] = repo_info.get("stargazers_count", 0)
+                result["forks"] = repo_info.get("forks_count", 0)
+                result["language"] = repo_info.get("language") or ""
+                result["topics"] = repo_info.get("topics", [])
+
+            # 2. Fetch README
+            if include_readme:
+                readme_res = await client.get(f"https://api.github.com/repos/{owner}/{repo}/readme", headers=headers)
+                if readme_res.status_code == 200:
+                    readme_data = readme_res.json()
+                    raw_content = readme_data.get("content", "")
+                    encoding = readme_data.get("encoding", "")
+                    if encoding == "base64" and raw_content:
+                        try:
+                            decoded = base64.b64decode(raw_content).decode("utf-8", errors="ignore")
+                            # Truncate to first 2500 characters to keep prompt compact
+                            result["readme_summary"] = decoded[:2500]
+                        except Exception as decode_err:
+                            logger.warning(f"Failed to decode README: {decode_err}")
+
+            # 3. Fetch directory file structure
+            if include_tree:
+                contents_res = await client.get(f"https://api.github.com/repos/{owner}/{repo}/contents", headers=headers)
+                if contents_res.status_code == 200:
+                    items = contents_res.json()
+                    if isinstance(items, list):
+                        result["directory_structure"] = [
+                            {"name": item.get("name"), "type": item.get("type"), "path": item.get("path")}
+                            for item in items[:15]
+                        ]
+
+        _GITHUB_CACHE[cache_key] = (now, result)
+        return result
+
+    except Exception as e:
+        logger.error(f"Error scraping GitHub for {owner}/{repo}: {e}")
+        return {"repo": f"{owner}/{repo}", "error": str(e), "note": "Could not connect to GitHub API"}
 
 # Tool definitions in OpenAI / DeepSeek function calling schema
 TOOL_DEFINITIONS = [
@@ -113,6 +208,40 @@ TOOL_DEFINITIONS = [
     {
         "type": "function",
         "function": {
+            "name": "scrape_github_repository",
+            "description": "Fetch live GitHub README and code directory layout for any of Mohmed's repositories (e.g. 'LeepSQL-AI', 'Primetrade.ai', 'NLP-summer-internship-').",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "repo_name": {
+                        "type": "string",
+                        "description": "The repository name or URL on GitHub to scrape."
+                    }
+                },
+                "required": ["repo_name"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "search_project_knowledge",
+            "description": "Look up deep technical details, architectural decisions, and key engineering learnings about Mohmed's projects (e.g. LangGraph usage, 5-layer SQL firewall, K-Means clustering, PubMedBERT focal loss).",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "project_id": {
+                        "type": "string",
+                        "description": "Project ID or topic (e.g. 'leapsql-ai', 'cleanisense', 'ai-meeting-assistant', 'trading-alert-system', 'clinical-nlp-research')."
+                    }
+                },
+                "required": ["project_id"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
             "name": "ask_visitor_followup",
             "description": "Ask the user an interactive multiple-choice question to personalize the conversation and keep them engaged.",
             "parameters": {
@@ -203,6 +332,21 @@ def execute_tool(tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
             }
         }
 
+    elif tool_name == "search_project_knowledge":
+        knowledge_list = load_data("project_knowledge.json")
+        proj_id = arguments.get("project_id", "").lower()
+        match = next(
+            (k for k in knowledge_list if k["id"].lower() == proj_id or proj_id in k["title"].lower() or any(proj_id in t.lower() for t in k.get("tech_stack", []))),
+            None
+        )
+        if match:
+            return {"card_type": "project_knowledge", "data": match}
+        return {"card_type": "project_knowledge", "data": knowledge_list[0] if knowledge_list else {}}
+
+    elif tool_name == "scrape_github_repository":
+        # Synchronous wrapper placeholder; actual async execution is in execute_tool_async
+        return {"card_type": "github_scrape", "data": {"repo": arguments.get("repo_name", "")}}
+
     elif tool_name == "ask_visitor_followup":
         return {
             "card_type": "question_card",
@@ -213,3 +357,14 @@ def execute_tool(tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
         }
 
     return {"card_type": "generic", "data": {"message": f"Tool {tool_name} executed"}}
+
+async def execute_tool_async(tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
+    """Asynchronous tool execution supporting network-bound scraping."""
+    if tool_name == "scrape_github_repository":
+        repo_name = arguments.get("repo_name", "")
+        scraped = await fetch_github_repo_details(repo_name)
+        return {
+            "card_type": "github_scrape",
+            "data": scraped
+        }
+    return execute_tool(tool_name, arguments)

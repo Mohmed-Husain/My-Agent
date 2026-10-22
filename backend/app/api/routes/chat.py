@@ -1,11 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException
-from fastapi.responses import StreamingResponse
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from fastapi.responses import StreamingResponse, JSONResponse
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.db.database import get_db
 from app.db.models import SessionModel, MessageModel
 from app.core.orchestrator import orchestrator
+from app.core.rate_limiter import rate_limiter
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
@@ -15,10 +16,25 @@ class ChatRequest(BaseModel):
     visitor_name: str | None = None
 
 @router.post("")
-async def chat_endpoint(req: ChatRequest, db: AsyncSession = Depends(get_db)):
-    """SSE Streaming chat endpoint with structured card generation."""
+async def chat_endpoint(req: ChatRequest, request: Request, db: AsyncSession = Depends(get_db)):
+    """SSE Streaming chat endpoint with 4-tier rate limiting & structured card generation."""
     if not req.message.strip():
         raise HTTPException(status_code=400, detail="Message cannot be empty")
+
+    # 4-Tier Rate Limiting evaluation
+    allowed, reason, retry_after = rate_limiter.check_rate_limits(
+        request=request,
+        session_id=req.session_id
+    )
+    if not allowed:
+        return JSONResponse(
+            status_code=429,
+            content={
+                "detail": reason or "Too Many Requests",
+                "retry_after": retry_after
+            },
+            headers={"Retry-After": str(retry_after)}
+        )
 
     return StreamingResponse(
         orchestrator.process_chat(

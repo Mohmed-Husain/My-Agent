@@ -1,0 +1,133 @@
+[
+  {
+    "id": "leapsql-ai",
+    "title": "LeapSQL-AI",
+    "github_repo": "LeepSQL-AI",
+    "github_url": "https://github.com/Mohmed-Husain/LeepSQL-AI",
+    "tech_stack": [
+      "LangGraph",
+      "FastAPI",
+      "Multi-Agent Systems",
+      "PostgreSQL",
+      "Pydantic v2",
+      "SQLAlchemy",
+      "StateGraph"
+    ],
+    "what_it_is": "Enterprise-grade Natural Language to SQL platform using a stateful 3-agent LangGraph workflow with a 5-layer security model.",
+    "architecture_deep_dive": "Built with LangGraph StateGraph connecting 3 specialized autonomous agents: (1) Generator Agent which examines database schema metadata, translates natural language to SQL, and handles dialect specificity; (2) Evaluator Agent which parses AST, runs syntactic analysis, and enforces security boundaries; (3) Executor Agent which runs the query in an isolated read-only transaction and formats results into tabular JSON.",
+    "concept_explanation": "LangGraph is a library by LangChain for orchestrating stateful, multi-actor LLM applications as cyclic computation graphs. Unlike linear chains (LangChain DAGs), LangGraph allows cycles, branch conditions, human-in-the-loop interruptions, and state persistence across agent steps.",
+    "key_learnings": [
+      "Designing cyclical agent workflows with conditional edges in LangGraph's StateGraph to retry or refine failed queries.",
+      "Strict data contract enforcement between agents using Pydantic v2 schemas to eliminate schema drift across graph nodes.",
+      "Building a 5-layer SQL security firewall that prevents dangerous statements (DROP, DELETE, TRUNCATE, ALTER, GRANT) while allowing complex multi-table JOINs and aggregations.",
+      "Schema-aware contextual prompt engineering to minimize column hallucination on complex PostgreSQL schemas."
+    ],
+    "challenges_solved": [
+      "Handling ambiguous user prompts by routing back from Evaluator to Generator with syntax feedback.",
+      "Preventing destructive query injection while maintaining sub-second execution latency."
+    ]
+  },
+  {
+    "id": "cleanisense",
+    "title": "CleaniSense",
+    "github_repo": "My-Agent",
+    "github_url": "https://github.com/Mohmed-Husain",
+    "tech_stack": [
+      "Gemini AI",
+      "FastAPI",
+      "Python",
+      "Computer Vision",
+      "Civic Tech",
+      "Municipal Routing"
+    ],
+    "what_it_is": "National award-winning AI civic grievance platform for automated waste and environmental monitoring with live municipal routing.",
+    "architecture_deep_dive": "Citizen grievance reporting system featuring an automated multi-stage image verification pipeline using Google Gemini Vision AI to authenticate authentic waste dumping vs spam images, automated geocoding, and municipal department routing. Presented at the National Showcase in New Delhi before 11+ Members of Parliament.",
+    "concept_explanation": "Multimodal Vision AI integration allows combining raw sensor / user camera imagery with contextual metadata to automate municipal administrative triage.",
+    "key_learnings": [
+      "Engineering a reliable multi-modal image validation pipeline with Gemini Vision to filter spam or misleading images with >90% precision.",
+      "Structuring automated routing trees mapping civic issues to respective municipal zonal departments.",
+      "Building high-throughput FastAPI endpoints capable of handling sudden spikes during civic awareness drives."
+    ],
+    "challenges_solved": [
+      "Filtering out fake complaints and duplicate image submissions using visual embeddings and geographic clustering."
+    ]
+  },
+  {
+    "id": "ai-meeting-assistant",
+    "title": "AI Meeting Assistant",
+    "github_repo": "My-Agent",
+    "github_url": "https://github.com/Mohmed-Husain",
+    "tech_stack": [
+      "FastAPI",
+      "Django",
+      "LangChain",
+      "Qdrant VDB",
+      "RAG",
+      "K-Means Clustering",
+      "Ollama",
+      "OpenAI"
+    ],
+    "what_it_is": "Production transcript intelligence platform for semantic search, meeting intelligence, and automated action item extraction.",
+    "architecture_deep_dive": "Combines hierarchical summarization with K-Means semantic chunk clustering to compress transcripts before LLM processing, drastically cutting LLM API costs. Uses Qdrant Vector Database for sub-50ms hybrid dense-sparse semantic retrieval.",
+    "concept_explanation": "Agentic RAG with semantic pre-clustering reduces token waste by grouping conceptually related dialogue turns across long hour-long meeting transcripts before feeding context to the LLM.",
+    "key_learnings": [
+      "Reducing redundant transcript processing by 70–78% through pre-clustering dialogue segments before LLM synthesis.",
+      "Designing provider-agnostic LLM switching architecture supporting both cloud OpenAI models and self-hosted local Ollama instances.",
+      "Fine-tuning Qdrant vector search collections with metadata payload filters for instant meeting retrieval."
+    ],
+    "challenges_solved": [
+      "Overcoming context window limits and token costs on 2-hour long transcripts by implementing semantic segment clustering."
+    ]
+  },
+  {
+    "id": "trading-alert-system",
+    "title": "Trading Alert System",
+    "github_repo": "Primetrade.ai",
+    "github_url": "https://github.com/Mohmed-Husain/Primetrade.ai",
+    "tech_stack": [
+      "Django",
+      "Celery",
+      "Redis",
+      "WebSockets",
+      "SmartAPI",
+      "PostgreSQL",
+      "Distributed Systems"
+    ],
+    "what_it_is": "Real-time distributed event-driven alert engine evaluating financial market technical indicators across hundreds of tickers concurrently.",
+    "architecture_deep_dive": "Asynchronous event-driven architecture utilizing Celery worker pools and Redis queues to stream live market tick data from Angel One SmartAPI, computing 5 real-time technical indicators (RSI, MACD, Bollinger Bands, SMA, ATR) with sub-second latency.",
+    "concept_explanation": "Event-driven microservice pattern where market ticks trigger non-blocking indicator calculation workers and broadcast instant alert notifications via WebSockets.",
+    "key_learnings": [
+      "Architecting distributed worker pools with Celery and Redis to handle concurrent market tick streams without memory leaks.",
+      "Optimizing financial vector math calculations (MACD, Bollinger Bands) for sub-second execution.",
+      "Maintaining stateful WebSocket connections with resilient reconnect backoff mechanisms."
+    ],
+    "challenges_solved": [
+      "Eliminating race conditions and alert dispatch lag during high-volatility market opening hours."
+    ]
+  },
+  {
+    "id": "clinical-nlp-research",
+    "title": "Clinical NLP & MIMIC-IV ICD Prediction",
+    "github_repo": "NLP-summer-internship-",
+    "github_url": "https://github.com/Mohmed-Husain/NLP-summer-internship-",
+    "tech_stack": [
+      "PubMedBERT",
+      "PyTorch",
+      "Transformers",
+      "Federated Learning",
+      "Healthcare AI",
+      "Sliding-Window Attention"
+    ],
+    "what_it_is": "Centralized Clinical NLP pipeline for ICD code prediction across 298,000 MIMIC-IV discharge summaries under Dr. Sanjay Saxena. Abstract selected for IEEE Transactions on Computational Imaging.",
+    "architecture_deep_dive": "Deep learning NLP pipeline utilizing domain-specific PubMedBERT with sliding-window chunk tokenization to process long clinical notes. Employs class-balanced focal loss to address severe long-tail distribution across thousands of ICD diagnostic codes.",
+    "concept_explanation": "Domain-adapted BERT models fine-tuned with focal loss to handle extreme class imbalance in clinical diagnostic taxonomies, combined with Federated Learning concepts for patient privacy.",
+    "key_learnings": [
+      "Handling extreme class imbalance in medical diagnostics using class-balanced focal loss instead of standard cross-entropy.",
+      "Sliding-window tokenization strategies to preserve contextual clinical narratives beyond standard 512-token BERT limits.",
+      "Designing privacy-preserving Federated Learning workflows for hospital EHR data security."
+    ],
+    "challenges_solved": [
+      "Training on long, noisy clinical summaries without truncation loss using sliding-window aggregation."
+    ]
+  }
+]
