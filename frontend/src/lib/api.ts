@@ -1,5 +1,5 @@
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  process.env.NEXT_PUBLIC_API_URL || "https://my-agent-backend-09t6.onrender.com";
 
 export interface StreamEvent {
   type: "text" | "card" | "question" | "done" | "error";

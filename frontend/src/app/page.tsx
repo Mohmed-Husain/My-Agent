@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import Avatar from "@/components/Avatar";
 import ChatInterface from "@/components/ChatInterface";
+import { API_BASE_URL } from "@/lib/api";
 
 interface AnalyticsResponse {
   total_sessions: number;
@@ -39,7 +40,7 @@ export default function Home() {
     setShowAdminModal(true);
     setLoadingAnalytics(true);
     try {
-      const res = await fetch("http://localhost:8000/api/v1/admin/analytics");
+      const res = await fetch(`${API_BASE_URL}/api/v1/admin/analytics`);
       if (res.ok) {
         const data: AnalyticsResponse = await res.json();
         setAnalyticsData(data);
