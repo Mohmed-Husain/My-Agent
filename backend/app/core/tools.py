@@ -22,40 +22,33 @@ def load_data(filename: str):
             return json.load(f)
     return []
 
-ALLOWED_REPOS = {
-    "cleanisense",
-    "ai-meeting-assistant",
-    "leapsql-ai",
-    "leepsql-ai",
-    "trading-alert-system",
-    "primetrade.ai",
-    "gdg-metropulse",
-    "nlp-summer-internship-",
-    "my-agent"
-}
+import re
+
+# Strict repo name regex: letters, numbers, hyphens, dots, underscores only
+VALID_REPO_PATTERN = re.compile(r"^[a-zA-Z0-9_\-\.]+$")
 
 async def fetch_github_repo_details(repo_name: str, include_readme: bool = True, include_tree: bool = True) -> dict[str, Any]:
     """
-    Hardened GitHub repository scraper:
-    1. Rejects any non-GitHub URL, SSRF payloads (localhost, 127.0.0.1, internal metadata IPs).
-    2. Strict allowlist check: only Mohmed-Husain's authorized public repos are accessible.
-    3. Caches results in-memory for 15 minutes.
+    Scrapes and fetches live repository metadata, README content, and file structures from GitHub.
+    Hardened with strict allowlist and regex validation to prevent SSRF and path traversal.
+    Only allows access to repositories owned by Mohmed Husain (Mohmed-Husain).
     """
-    raw_name = repo_name.strip()
+    clean_repo = repo_name.strip()
     
-    # 1. SSRF prevention: Reject full URLs with unauthorized schemes/hosts
-    if "://" in raw_name and not raw_name.startswith("https://github.com/"):
-        logger.warning(f"Security Alert: Blocked unauthorized GitHub URL / SSRF probe: {raw_name}")
-        return {"repo": raw_name, "error": "Access denied: External URLs are not permitted.", "note": "SSRF defense active"}
+    # Strip URL prefixes if provided
+    for prefix in ["https://github.com/", "http://github.com/", "github.com/"]:
+        if clean_repo.lower().startswith(prefix):
+            clean_repo = clean_repo[len(prefix):]
+            break
+            
+    clean_repo = clean_repo.strip().strip("/")
+    
+    # Block URL schemes, ports, IP addresses, queries, and path traversals
+    if any(blocked in clean_repo for blocked in [":", "@", "\\", "..", "?", "#", "localhost", "127.", "169.254"]):
+        logger.warning(f"Blocked suspicious repo query: {repo_name}")
+        return {"error": "Invalid repository name"}
 
-    # Extract target repository name
-    clean_repo = raw_name
-    if "github.com/" in clean_repo:
-        clean_repo = clean_repo.split("github.com/")[-1]
-    
-    clean_repo = clean_repo.strip("/").split("?")[0].split("#")[0]
-    parts = clean_repo.split("/")
-    
+    parts = [p for p in clean_repo.split("/") if p]
     if len(parts) == 1:
         owner = settings.GITHUB_USERNAME
         repo = parts[0]
@@ -63,19 +56,20 @@ async def fetch_github_repo_details(repo_name: str, include_readme: bool = True,
         owner = parts[0]
         repo = parts[1]
     else:
-        logger.warning(f"Security Alert: Malformed repository path: {raw_name}")
-        return {"repo": raw_name, "error": "Invalid repository identifier."}
+        logger.warning(f"Invalid repo format: {repo_name}")
+        return {"error": "Invalid repository format"}
 
-    # 2. Strict Owner & Repo Allowlist Enforcement
+    # Strict Owner Allowlist: Only allow Mohmed Husain's GitHub repositories
     if owner.lower() != settings.GITHUB_USERNAME.lower():
-        logger.warning(f"Security Alert: Blocked access to non-whitelisted GitHub owner: {owner}")
-        return {"repo": f"{owner}/{repo}", "error": "Access denied: Can only inspect repositories belonging to Mohmed Husain."}
+        logger.warning(f"Blocked unauthorized GitHub owner access: {owner}")
+        return {"error": f"Access restricted to {settings.GITHUB_USERNAME} repositories only"}
 
-    if repo.lower() not in ALLOWED_REPOS:
-        logger.warning(f"Security Alert: Blocked access to unlisted repo: {repo}")
-        return {"repo": f"{owner}/{repo}", "error": f"Repository '{repo}' is not in the public showcase allowlist."}
+    # Strict Repo name validation
+    if not VALID_REPO_PATTERN.match(repo):
+        logger.warning(f"Blocked invalid repo characters: {repo}")
+        return {"error": "Repository name contains invalid characters"}
 
-    cache_key = f"{owner.lower()}/{repo.lower()}"
+    cache_key = f"{owner}/{repo}"
     now = time.time()
     if cache_key in _GITHUB_CACHE:
         cached_time, cached_data = _GITHUB_CACHE[cache_key]
