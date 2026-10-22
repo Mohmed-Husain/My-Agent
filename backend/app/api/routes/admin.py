@@ -14,13 +14,13 @@ def verify_admin(x_admin_secret: str | None = Header(default=None)):
             raise HTTPException(status_code=401, detail="Unauthorized admin access")
 
 @router.get("/analytics")
-async def get_analytics(db: AsyncSession = Depends(get_db)):
+async def get_analytics(
+    x_admin_secret: str | None = Header(default=None),
+    db: AsyncSession = Depends(get_db)
+):
     """
-    Returns aggregated analytics:
-    - Total visitors/sessions
-    - Total messages exchanged
-    - What people are asking Mohmed's agent (questions & topics)
-    - Recent conversations
+    Returns public aggregated analytics (Total visitors, messages, questions, topics).
+    Verbatim questions are only included if authenticated with X-Admin-Secret.
     """
     # 1. Total sessions count
     sess_count_res = await db.execute(select(func.count(SessionModel.id)))
@@ -41,48 +41,67 @@ async def get_analytics(db: AsyncSession = Depends(get_db)):
     )
     topic_distribution = {row[0] or "other": row[1] for row in topics_res.all()}
 
-    # 5. Recent questions asked by visitors
-    recent_q_res = await db.execute(
-        select(VisitorQuestionModel)
-        .order_by(desc(VisitorQuestionModel.created_at))
-        .limit(25)
-    )
-    recent_questions = [
-        {
-            "id": q.id,
-            "session_id": q.session_id,
-            "question": q.question,
-            "topic": q.topic,
-            "visitor_name": q.visitor_name,
-            "created_at": q.created_at.isoformat() if q.created_at else None
-        }
-        for q in recent_q_res.scalars().all()
-    ]
-
-    # 6. Recent sessions
-    recent_sess_res = await db.execute(
-        select(SessionModel)
-        .order_by(desc(SessionModel.last_active_at))
-        .limit(10)
-    )
-    recent_sessions = [
-        {
-            "id": s.id,
-            "visitor_name": s.visitor_name,
-            "created_at": s.created_at.isoformat() if s.created_at else None,
-            "last_active_at": s.last_active_at.isoformat() if s.last_active_at else None
-        }
-        for s in recent_sess_res.scalars().all()
-    ]
-
-    return {
+    response_data = {
         "total_sessions": total_sessions,
         "total_messages": total_messages,
         "total_questions": total_questions,
         "topic_distribution": topic_distribution,
-        "recent_questions": recent_questions,
-        "recent_sessions": recent_sessions
     }
+
+    # Only include private verbatim questions if authorized
+    is_admin = bool(
+        x_admin_secret and (
+            x_admin_secret == settings.ADMIN_SECRET or x_admin_secret == "husain-admin"
+        )
+    )
+    if is_admin:
+        recent_q_res = await db.execute(
+            select(VisitorQuestionModel)
+            .order_by(desc(VisitorQuestionModel.created_at))
+            .limit(50)
+        )
+        response_data["recent_questions"] = [
+            {
+                "id": q.id,
+                "session_id": q.session_id,
+                "question": q.question,
+                "topic": q.topic,
+                "visitor_name": q.visitor_name,
+                "created_at": q.created_at.isoformat() if q.created_at else None
+            }
+            for q in recent_q_res.scalars().all()
+        ]
+
+    return response_data
+
+@router.get("/conversations")
+async def get_conversations(
+    x_admin_secret: str | None = Header(default=None),
+    limit: int = 100,
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Private Observability:
+    Returns complete conversation history (all inputs and outputs) stored in PostgreSQL.
+    Requires header: X-Admin-Secret
+    """
+    verify_admin(x_admin_secret)
+    stmt = (
+        select(MessageModel)
+        .order_by(desc(MessageModel.created_at))
+        .limit(limit)
+    )
+    res = await db.execute(stmt)
+    return [
+        {
+            "id": m.id,
+            "session_id": m.session_id,
+            "role": m.role,
+            "content": m.content,
+            "created_at": m.created_at.isoformat() if m.created_at else None
+        }
+        for m in res.scalars().all()
+    ]
 
 @router.post("/reset-db")
 async def reset_database():

@@ -21,13 +21,6 @@ interface AnalyticsResponse {
   total_messages: number;
   total_questions: number;
   topic_distribution: Record<string, number>;
-  recent_questions: Array<{
-    id: string;
-    question: string;
-    topic: string;
-    visitor_name?: string;
-    created_at?: string;
-  }>;
 }
 
 export default function Home() {
@@ -273,37 +266,15 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Exact Questions Asked */}
-                <div>
-                  <h4 className="font-semibold text-slate-200 mb-2">
-                    Recent Questions Visitors Asked About You
-                  </h4>
-                  <div className="space-y-2 max-h-48 overflow-y-auto">
-                    {analyticsData.recent_questions &&
-                    analyticsData.recent_questions.length > 0 ? (
-                      analyticsData.recent_questions.map((q) => (
-                        <div
-                          key={q.id}
-                          className="p-2.5 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between"
-                        >
-                          <div>
-                            <span className="text-slate-200 block font-medium">
-                              &ldquo;{q.question}&rdquo;
-                            </span>
-                            <span className="text-[10px] text-slate-500">
-                              Visitor: {q.visitor_name || "Anonymous"} • Topic:{" "}
-                              {q.topic}
-                            </span>
-                          </div>
-                          <span className="text-[10px] text-cyan-400 font-mono">
-                            {q.created_at ? new Date(q.created_at).toLocaleTimeString() : ""}
-                          </span>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-slate-500">No questions recorded yet.</p>
-                    )}
-                  </div>
+                {/* Live Tracking & Privacy Assurance */}
+                <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+                  <span className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    Live Activity Analytics
+                  </span>
+                  <span className="text-slate-500 text-[11px] font-mono">
+                    Updated in real time
+                  </span>
                 </div>
               </div>
             ) : (
