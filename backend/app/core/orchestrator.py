@@ -8,6 +8,7 @@ from app.db.models import SessionModel, MessageModel, VisitorQuestionModel
 from app.core.prompts import SYSTEM_PROMPT
 from app.core.llm import deepseek_client
 from app.core.graph import multi_agent_graph
+from app.core.rate_limiter import rate_limiter
 
 logger = logging.getLogger("uvicorn.error")
 
@@ -76,6 +77,20 @@ class ConversationOrchestrator:
             created_at=datetime.utcnow()
         )
         db.add(question_record)
+
+        # 2b. Anomaly & Probe Detection: Check if prompt exhibits security probing patterns
+        lowered_msg = user_message_clean.lower()
+        probe_patterns = [
+            "ignore previous instructions", "system prompt", "internal prompt",
+            "jailbreak", "override rule", "repeat the above", "reveal your instructions",
+            "i am mohmed husain", "i'm mohmed husain", "i am the owner", "i'm the creator"
+        ]
+        if any(p in lowered_msg for p in probe_patterns):
+            rate_limiter.record_security_probe(
+                session_id=active_session_id,
+                probe_type="prompt_probe",
+                details=user_message_clean[:80]
+            )
 
         # 3. Save User message to DB
         user_db_msg = MessageModel(
