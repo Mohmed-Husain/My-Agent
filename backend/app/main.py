@@ -7,9 +7,11 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 import logging
+import re
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.requests import Request
 from app.config import settings
 from app.db.database import init_db
 from app.api.routes.chat import router as chat_router
@@ -44,6 +46,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.middleware("http")
+async def normalize_slashes(request: Request, call_next):
+    # Normalize double slashes like '//api/v1/chat' -> '/api/v1/chat'
+    if "//" in request.scope.get("path", ""):
+        request.scope["path"] = re.sub(r"/+", "/", request.scope["path"])
+    return await call_next(request)
 
 # Mount Routers
 app.include_router(health_router)

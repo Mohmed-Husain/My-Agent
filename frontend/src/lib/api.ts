@@ -1,5 +1,8 @@
-export const API_BASE_URL =
+const RAW_API_URL =
   process.env.NEXT_PUBLIC_API_URL || "https://my-agent-backend-09t6.onrender.com";
+
+// Strictly remove any trailing slashes to avoid '//api/v1/...' 404 errors
+export const API_BASE_URL = RAW_API_URL.trim().replace(/\/+$/, "");
 
 export interface StreamEvent {
   type: "text" | "card" | "question" | "done" | "error";
